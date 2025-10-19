@@ -93,12 +93,7 @@
       <details class="card" style="padding:8px 12px;">
         <summary>How to Play</summary>
         <div class="hint" style="max-width:720px; margin-top:6px">
-         <div class="instructions" style="font-family: Arial, sans-serif; line-height: 1.5; max-width: 700px; margin: 1em auto; color: white;">
-  <style>
-    .instructions, .instructions * {
-      color: white !important;
-    }
-  </style>
+        <div class="instructions">
   <h2>🧩 How to Play</h2>
   <ul>
     <li>The teacher enters a list of sentences or single words into the word box at the top – a minimum of 4, ideally around 9.</li>
@@ -115,6 +110,15 @@
     <li>Students use the clues to improve the next guess and try to find the correct sequence in as few attempts as possible!</li>
   </ul>
 </div>
+
+<style>
+  /* force white text regardless of page styles */
+  .instructions,
+  .instructions * {
+    color: #ffffff !important;
+    background: transparent !important;
+  }
+</style>
 
         </div>
       </details>
@@ -394,6 +398,7 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
