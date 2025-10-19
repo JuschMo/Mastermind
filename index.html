@@ -36,10 +36,10 @@
   .rowWrap{display:grid;gap:8px;grid-template-columns:1fr;align-items:start}
   .rowLabel{display:flex;align-items:center;justify-content:flex-start;font-weight:700;font-size:16px;opacity:.9}
   .slots{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:14px}
-  .slot{min-height:80px;border:2px dashed rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;padding:8px 10px}
+  .slot{min-height:80px;border:2px dashed rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;padding:8px 10px;align-items:stretch}
   .slot.filled{border-style:solid;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.06)}
-  .slotTop{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .word{font-weight:800;font-size:22px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .slotTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .word{font-weight:800;font-size:22px;overflow:visible;white-space:normal;word-break:break-word;overflow-wrap:anywhere;line-height:1.2}
   .remove{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer}
   .statusRow{display:flex;justify-content:flex-end}
   select.statusSel{background:#0b1222;color:var(--fg);border:1px solid rgba(255,255,255,.18);border-radius:8px;min-height:36px;min-width:48px;max-width:60px;padding:0 6px;text-align:center;font-size:22px}
@@ -93,7 +93,7 @@
       <details class="card" style="padding:8px 12px;">
         <summary>How to Play</summary>
         <div class="hint" style="max-width:720px; margin-top:6px">
-          1) Enter 9 words and start. 2) Drag/tap to place 4 words into the active row (sequence matters). 3) For each slot choose a status from the small drop‑down: ✅ / 🟡 / ❌. 4) Lock the row. 10 attempts total.
+          1) Enter at least 4 words and start. 2) Drag/tap to place 4 words into the active row (sequence matters). 3) For each slot choose a status from the small drop‑down: ✅ / 🟡 / ❌. 4) Lock the row. 10 attempts total.
           Keyboard: focus a slot → <b>Enter</b> pick word, <b>Backspace</b> clear, <b>S</b> cycle status.
         </div>
       </details>
@@ -103,8 +103,8 @@
   <!-- Setup -->
   <section class="card setup" aria-labelledby="setup-h">
     <div>
-      <h2 id="setup-h" style="margin:0 0 6px; font-size:18px">Enter 9 words</h2>
-      <textarea id="wordInput" rows="4" placeholder="Type 9 words (comma or new line separated)"></textarea>
+      <h2 id="setup-h" style="margin:0 0 6px; font-size:18px">Enter words (min 4)</h2>
+      <textarea id="wordInput" rows="4" placeholder="Type words (comma or new line separated) — minimum 4"></textarea>
       <div class="hint">Words keep original casing. Duplicates not allowed.</div>
     </div>
     <div style="display:flex; gap:8px; align-items:end; justify-content:flex-end">
@@ -183,7 +183,7 @@ window.addEventListener('DOMContentLoaded', () => {
     body.classList.toggle('light-mode', !!c.lightMode);
   }
 
-  const STR={need9:'Enter exactly 9 unique, non-empty words.',ready:'Words loaded. Start guessing!',dupInRow:'Each row must use unique words (turn on duplicates to allow repeats).',rowLocked:'Row locked. Next row activated.',invalidRow:'Row needs 4 words and each slot must have a status.',restored:'Session restored from last save.',imported:'Imported.',importBad:'Invalid or mismatched data.'};
+  const STR={needMin4:'Enter at least 4 unique, non-empty words.',ready:'Words loaded. Start guessing!',dupInRow:'Each row must use unique words (turn on duplicates to allow repeats).',rowLocked:'Row locked. Next row activated.',invalidRow:'Row needs 4 words and each slot must have a status.',restored:'Session restored from last save.',imported:'Imported.',importBad:'Invalid or mismatched data.'};
   const MAX_ROWS=10,SLOTS_PER=4;
   let state={words:[],rows:[],activeRowIndex:0,allowDupes:false};
 
@@ -325,8 +325,8 @@ window.addEventListener('DOMContentLoaded', () => {
   // Listeners (safe-guarded)
   on(els.btnDemo,'click',()=>{els.input.value='cat, dog, moon, river, apple, cloud, chair, train, pizza';validateStartReady()});
   on(els.input,'input',validateStartReady);
-  function validateStartReady(){const words=uniq(normSplit(els.input.value)); els.btnStart && (els.btnStart.disabled=!(words.length===9))}
-  on(els.btnStart,'click',()=>{const words=uniq(normSplit(els.input.value));if(words.length!==9){toast(STR.need9);return;}resetState(false);state.words=words;els.input.value=words.join(', ');renderAll();});
+  function validateStartReady(){const words=uniq(normSplit(els.input.value)); els.btnStart && (els.btnStart.disabled=!(words.length>=4))}
+  on(els.btnStart,'click',()=>{const words=uniq(normSplit(els.input.value));if(words.length<4){toast(STR.needMin4);return;}resetState(false);state.words=words;els.input.value=words.join(', ');renderAll();});
   on(els.btnNew,'click',()=>{resetState(true);renderAll()});
   els.btnStartNewFromEnd && on(els.btnStartNewFromEnd,'click',()=>{resetState(true);renderAll()});
   on(els.btnResetAll,'click',()=>{if(confirm('Reset everything (including words)?')){resetState(false);els.input.value='';renderAll();}});
